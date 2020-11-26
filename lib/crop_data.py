@@ -1,6 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sc
+import tkinter as tk
+from tkinter import filedialog
+import os, os.path
+from scipy.io import savemat
 
 # -------------------------------------------------------------------------------------------------
 # Selects the cropping boundaries of the 3D data by prompting the users to click on the data slices.
@@ -34,10 +38,22 @@ def onclick_z(event):
     return
 
 
-def cropping_dosimeters(oct):
+def cropping_dosimeters():
 
-    ans = input('Rotate the data to match TOPAS? (y/n)')
-    oct = cropping_func(oct, ans)
+    ## Cropping the raw OCT files (not necessary in every run)
+    # files are saved in a new "_crop" folder under the same name .............
+
+    print('Select the OCT file')
+    root = tk.Tk()
+    root.withdraw()
+    filename = filedialog.askopenfilename()
+
+    if filename.endswith("mat"):
+        mat = sc.io.loadmat(filename)
+        oct = np.array(mat['OCT'])
+
+    ans_rot = input('Rotate the data to match TOPAS? (y/n)')
+    oct = cropping_func(oct, ans_rot)
 
     terminate = False
     while not terminate:
@@ -47,7 +63,34 @@ def cropping_dosimeters(oct):
         elif ans == 'n' or ans == 'N':
             terminate = True
 
-    return oct
+    # saving the cropped data into a new folder
+    file_dir = os.path.split(filename)[0]
+    if not os.path.isdir(file_dir + "_crop"):
+        os.mkdir(file_dir + "_crop")
+    mdic = {"OCT": oct, "label": "experiment"}
+    savemat(file_dir + "_crop" + "/" + os.path.split(filename)[1], mdic)
+
+
+    # cropping all the other files in the folder in the same dimensions
+    ans = input('Crop all the data set in the folder? (y/n)')
+    while ans != 'y' or ans != 'n':
+        print('invalid input \n')
+        ans = input('Crop all the data set in the folder? (y/n)')
+    if ans == y:
+        path = os.path.dirname(filename)
+        for name in os.listdir(path):
+            if os.path.isfile(name):
+                if name.endswith("mat"):
+                    # importing and cropping the data
+                    mat = sc.io.loadmat(name)
+                    oct = np.array(mat['OCT'])
+                    oct = cropping_func(oct, ans_rot)
+                    # saving the data to the _crop folder
+                    if not os.path.isdir(file_dir + "_crop"):
+                        os.mkdir(file_dir + "_crop")
+                    mdic = {"OCT": oct, "label": "experiment"}
+                    savemat(file_dir + "_crop" + "/" + os.path.split(name)[1], mdic)
+    return
 
 
 def cropping_func(oct, rotate):
@@ -88,4 +131,4 @@ def cropping_func(oct, rotate):
     ax[1].imshow(oct[:, :, int(oct.shape[2] / 2)], cmap='jet')
     plt.show()
 
-    return oct
+    return oct, x, y, z
