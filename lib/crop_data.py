@@ -8,7 +8,7 @@ import scipy as sc
 # the sets. That is advised only if all dosimeters have the same dimensions.
 # -------------------------------------------------------------------------------------------------
 
-# The selection by mouse clicks functions where inspired by the stack exchange discussion:
+# The selection by mouse clicks functions was inspired by the stack exchange discussion:
 # https://stackoverflow.com/questions/25521120/store-mouse-click-event-coordinates-with-matplotlib
 
 def onclick(event):
@@ -27,7 +27,7 @@ def onclick_z(event):
     global x, z
     z, x = event.xdata, event.ydata
 
-    coords_z.append(z) # only the z coordinates are saved
+    coords_z.append(z)  # only the z coordinates are saved
 
     if len(coords_z) == 2:
         plt.close()
@@ -35,7 +35,9 @@ def onclick_z(event):
 
 
 def cropping_dosimeters(oct):
-    oct = cropping_func(oct, 'yes')
+
+    ans = input('Rotate the data to match TOPAS? (y/n)')
+    oct = cropping_func(oct, ans)
 
     terminate = False
     while not terminate:
