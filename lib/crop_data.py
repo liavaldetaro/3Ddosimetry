@@ -37,6 +37,46 @@ def onclick_z(event):
         plt.close()
     return
 
+def cropping_func(oct, rotate):
+    global coords_x, coords_y, coords_z
+    coords_x = []
+    coords_y = []
+    coords_z = []
+
+    if rotate == 'yes':
+        oct = sc.ndimage.interpolation.rotate(oct, axes=(2, 0), angle=90, reshape=True)
+        oct = sc.ndimage.interpolation.rotate(oct, axes=(1, 2), angle=180, reshape=True)
+
+    fig = plt.figure(1)
+    ax = fig.add_subplot(111)
+    ax.imshow(oct[:, :, int(oct.shape[2] / 2)], cmap='jet')
+
+    # Call click func
+    cid = fig.canvas.mpl_connect('button_press_event', onclick)
+    plt.show()
+
+    fig = plt.figure(1)
+    ax = fig.add_subplot(111)
+    ax.imshow(oct[int(oct.shape[0] / 2), :, :], cmap='jet')
+
+    # Call click func
+    cid = fig.canvas.mpl_connect('button_press_event', onclick_z)
+    plt.show()
+
+    x = (int(np.amin(coords_x)), int(np.amax(coords_x)))
+    y = (int(np.amin(coords_y)), int(np.amax(coords_y)))
+    z = (int(np.amin(coords_z)), int(np.amax(coords_z)))
+
+    oct = oct[x[0]:x[1], y[0]:y[1], z[0]:z[1]]
+
+    plt.rcParams.update({'font.size': 12})
+    fig, ax = plt.subplots(1, 2)
+    ax[0].imshow(oct[int(oct.shape[0] / 2), :, :], cmap='jet')
+    ax[1].imshow(oct[:, :, int(oct.shape[2] / 2)], cmap='jet')
+    plt.show()
+
+    return oct, x, y, z
+
 
 def cropping_dosimeters():
 
@@ -93,42 +133,5 @@ def cropping_dosimeters():
     return
 
 
-def cropping_func(oct, rotate):
-    global coords_x, coords_y, coords_z
-    coords_x = []
-    coords_y = []
-    coords_z = []
-
-    if rotate == 'yes':
-        oct = sc.ndimage.interpolation.rotate(oct, axes=(2, 0), angle=90, reshape=True)
-        oct = sc.ndimage.interpolation.rotate(oct, axes=(1, 2), angle=180, reshape=True)
-
-    fig = plt.figure(1)
-    ax = fig.add_subplot(111)
-    ax.imshow(oct[:, :, int(oct.shape[2] / 2)], cmap='jet')
-
-    # Call click func
-    cid = fig.canvas.mpl_connect('button_press_event', onclick)
-    plt.show()
-
-    fig = plt.figure(1)
-    ax = fig.add_subplot(111)
-    ax.imshow(oct[int(oct.shape[0] / 2), :, :], cmap='jet')
-
-    # Call click func
-    cid = fig.canvas.mpl_connect('button_press_event', onclick_z)
-    plt.show()
-
-    x = (int(np.amin(coords_x)), int(np.amax(coords_x)))
-    y = (int(np.amin(coords_y)), int(np.amax(coords_y)))
-    z = (int(np.amin(coords_z)), int(np.amax(coords_z)))
-
-    oct = oct[x[0]:x[1], y[0]:y[1], z[0]:z[1]]
-
-    plt.rcParams.update({'font.size': 12})
-    fig, ax = plt.subplots(1, 2)
-    ax[0].imshow(oct[int(oct.shape[0] / 2), :, :], cmap='jet')
-    ax[1].imshow(oct[:, :, int(oct.shape[2] / 2)], cmap='jet')
-    plt.show()
-
-    return oct, x, y, z
+if __name__ == "__main__":
+    cropping_dosimeters()

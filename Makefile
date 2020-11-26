@@ -6,8 +6,9 @@ PYTHON	= python3
 
 help: 
 	@echo "---------------- HELP ----------------"
-	@echo "* To test the setup type 'make test'    "
-	@echo "* To clean temp files type 'make clean' "
+	@echo "* To test the setup, type 'make test'    "
+	@echo "* To clean temp files, type 'make clean' "
+	@echo "* To crop the data sets, type 'make crop'"
 	@echo "--------------------------------------"
 
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
@@ -21,6 +22,8 @@ $(directory):
 	@echo "Folder $(directory) does not exist!"
 $(directory_lib):
 	@echo "Folder $(directory_lib) does not exist!"
+crop: 
+	${PYTHON} $(directory_lib)/crop_data.py
 
 clean:
 	rm -r *.txt *.log 
