@@ -91,6 +91,8 @@ def cropping_dosimeters():
     if filename.endswith("mat"):
         mat = sc.io.loadmat(filename)
         oct = np.array(mat['OCT'])
+    else:
+        print('could not find .mat files')
 
     ans_rot = input('Rotate the data to match TOPAS? (y/n)')
     oct = cropping_func(oct, ans_rot)
