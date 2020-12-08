@@ -43,7 +43,7 @@ def cropping_func(oct, rotate):
     coords_y = []
     coords_z = []
 
-    if rotate == 'yes':
+    if rotate == 'y':
         oct = sc.ndimage.interpolation.rotate(oct, axes=(2, 0), angle=90, reshape=True)
         oct = sc.ndimage.interpolation.rotate(oct, axes=(1, 2), angle=180, reshape=True)
 
@@ -67,7 +67,7 @@ def cropping_func(oct, rotate):
     y = (int(np.amin(coords_y)), int(np.amax(coords_y)))
     z = (int(np.amin(coords_z)), int(np.amax(coords_z)))
 
-    oct = oct[x[0]:x[1], y[0]:y[1], z[0]:z[1]]
+    oct = np.array(oct[x[0]:x[1], y[0]:y[1], z[0]:z[1]])
 
     plt.rcParams.update({'font.size': 12})
     fig, ax = plt.subplots(1, 2)
@@ -95,13 +95,13 @@ def cropping_dosimeters():
         print('could not find .mat files')
 
     ans_rot = input('Rotate the data to match TOPAS? (y/n)')
-    oct = cropping_func(oct, ans_rot)
+    oct, x, y, z = cropping_func(oct, ans_rot)
 
     terminate = False
     while not terminate:
         ans = input('Continue cropping? (y/n)')
         if ans == 'y' or ans == 'Y':
-            oct = cropping_func(oct, 'no')
+            oct, x, y, z = cropping_func(oct, 'n')
         elif ans == 'n' or ans == 'N':
             terminate = True
 
@@ -115,23 +115,40 @@ def cropping_dosimeters():
 
     # cropping all the other files in the folder in the same dimensions
     ans = input('Crop all the data set in the folder? (y/n)')
-    while ans != 'y' or ans != 'n':
-        print('invalid input \n')
-        ans = input('Crop all the data set in the folder? (y/n)')
-    if ans == y:
+
+    if ans == 'y' or ans == 'Y':
         path = os.path.dirname(filename)
         for name in os.listdir(path):
-            if os.path.isfile(name):
-                if name.endswith("mat"):
-                    # importing and cropping the data
-                    mat = sc.io.loadmat(name)
-                    oct = np.array(mat['OCT'])
-                    oct = cropping_func(oct, ans_rot)
-                    # saving the data to the _crop folder
-                    if not os.path.isdir(file_dir + "_crop"):
-                        os.mkdir(file_dir + "_crop")
-                    mdic = {"OCT": oct, "label": "experiment"}
-                    savemat(file_dir + "_crop" + "/" + os.path.split(name)[1], mdic)
+            print(name)
+            if name.endswith("mat"):
+                # importing and cropping the data
+                mat = sc.io.loadmat(path + str('/') + name)
+                oct = np.array(mat['OCT'])
+                oct = np.array(oct[x[0]:x[1], y[0]:y[1], z[0]:z[1]])
+                # saving the data to the _crop folder
+                if not os.path.isdir(file_dir + "_crop"):
+                    os.mkdir(file_dir + "_crop")
+                mdic = {"OCT": oct, "label": "experiment"}
+                savemat(file_dir + "_crop" + "/" + os.path.split(name)[1], mdic)
+
+    ans = input('Crop data sets from other folders as well? (y/n)')
+    while ans == 'y' or ans == 'Y':
+        path = filedialog.askdirectory()
+        for name in os.listdir(path):
+            print(name)
+            if name.endswith("mat"):
+                # importing and cropping the data
+                mat = sc.io.loadmat(path + str('/') + name)
+                oct = np.array(mat['OCT'])
+                oct = np.array(oct[x[0]:x[1], y[0]:y[1], z[0]:z[1]])
+                # saving the data to the _crop folder
+                if not os.path.isdir(path + "_crop"):
+                    os.mkdir(path + "_crop")
+                mdic = {"OCT": oct, "label": "experiment"}
+                savemat(path + "_crop" + "/" + os.path.split(name)[1], mdic)
+
+        ans = input('Crop data sets from other folders as well? (y/n)')
+
     return
 
 
