@@ -1,3 +1,8 @@
+#####################################################
+# Written by Lia Valdetaro, 12/2020
+# Contact info: liavaldetaro@gmail.com
+#####################################################
+
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sc
@@ -131,7 +136,7 @@ def cropping_dosimeters():
                 mdic = {"OCT": oct, "label": "experiment"}
                 savemat(file_dir + "_crop" + "/" + os.path.split(name)[1], mdic)
 
-    ans = input('Crop data sets from other folders as well? (y/n)')
+    ans = input('Crop data sets from the folders as well? (y/n)')
     while ans == 'y' or ans == 'Y':
         path = filedialog.askdirectory()
         for name in os.listdir(path):
