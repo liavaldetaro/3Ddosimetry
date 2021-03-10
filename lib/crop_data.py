@@ -157,5 +157,59 @@ def cropping_dosimeters():
     return
 
 
+def cropping_TPS():
+    ## Cropping the raw OCT files (not necessary in every run)
+    # files are saved in a new "_crop" folder under the same name .............
+
+    print('Select the OCT file')
+    root = tk.Tk()
+    root.withdraw()
+    filename = filedialog.askopenfilename()
+
+    if filename.endswith("mat"):
+        mat = sc.io.loadmat(filename)
+        oct = np.array(mat['OCT'])
+    else:
+        print('could not find .mat files')
+
+    ans_rot = input('Rotate the data to match TOPAS? (y/n)')
+    oct, x, y, z = cropping_func(oct, ans_rot)
+
+    terminate = False
+    while not terminate:
+        ans = input('Continue cropping? (y/n)')
+        if ans == 'y' or ans == 'Y':
+            oct, x, y, z = cropping_func(oct, 'n')
+        elif ans == 'n' or ans == 'N':
+            terminate = True
+
+    # saving the cropped data into a new folder
+    file_dir = os.path.split(filename)[0]
+    if not os.path.isdir(file_dir + "_crop"):
+        os.mkdir(file_dir + "_crop")
+    mdic = {"OCT": oct, "label": "experiment"}
+    savemat(file_dir + "_crop" + "/" + os.path.split(filename)[1], mdic)
+
+    # cropping all the other files in the folder in the same dimensions
+    ans = input('Crop all the data set in the folder? (y/n)')
+
+    if ans == 'y' or ans == 'Y':
+        path = os.path.dirname(filename)
+        for name in os.listdir(path):
+            print(name)
+            if name.endswith("mat"):
+                # importing and cropping the data
+                mat = sc.io.loadmat(path + str('/') + name)
+                oct = np.array(mat['OCT'])
+                oct = np.array(oct[x[0]:x[1], y[0]:y[1], z[0]:z[1]])
+                # saving the data to the _crop folder
+                if not os.path.isdir(file_dir + "_crop"):
+                    os.mkdir(file_dir + "_crop")
+                mdic = {"OCT": oct, "label": "experiment"}
+                savemat(file_dir + "_crop" + "/" + os.path.split(name)[1], mdic)
+
+    return
+
+
 if __name__ == "__main__":
     cropping_dosimeters()

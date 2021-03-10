@@ -35,7 +35,6 @@ def image_registration(oct, oct_target):
     return oct_deformed
 
 
-
 def main():
 
     print('Select the OCT file')

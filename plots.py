@@ -345,7 +345,6 @@ def main():
         dos_signal = np.mean(np.mean(dosimeter.OCT[x, y - n:y + n, 21:25], axis=0))
         dos_signal_2 = np.mean(np.mean(dosimeter.OCT[x, 7:10, z-n:z+n], axis=0))
 
-
         dos_signal_error = np.std(np.std(dosimeter.OCT[x, y - n:y + n, 7:10], axis=0))
         dos_background_error = np.std(np.mean(dosimeter.OCT[x, y - n:y + n, 21:25], axis=0))
 
@@ -368,12 +367,11 @@ def main():
     plt.rcParams.update({'font.size': 12})
     c_string = sns.color_palette("dark", 7)
     fig, ax = plt.subplots(1, 1)
-
-    signal = np.zeros(6)
-
     for i in range(0, 6):
         dosimeter_signal = np.zeros(6)
         dosimeter_background = np.zeros(6)
+        dosimeter_signal_error = np.zeros(6)
+        dosimeter_background_error = np.zeros(6)
         days_list = np.zeros(6)
 
         dosimeter_signal_2 = np.zeros(6)
@@ -386,6 +384,8 @@ def main():
             elif signal_list[i, 0, j] == 0:
                 signal = signal_list[i, 1, j]
                 background = background_list[i, 1, j]
+                signal_error = signal_list_error[i, 1, j]
+                background_error = background_list_error[i, 1, j]
 
                 signal_2 = signal_list_2[i, 1, j]
 
@@ -393,6 +393,8 @@ def main():
             elif signal_list[i, 1, j] == 0:
                 signal = signal_list[i, 0, j]
                 background = background_list[i, 0, j]
+                signal_error = signal_list_error[i, 0, j]
+                background_error = background_list_error[i, 0, j]
 
                 signal_2 = signal_list_2[i, 0, j]
 
@@ -401,6 +403,8 @@ def main():
             elif i == 2 and j == 0:
                 signal = signal_list[i, 1, j]
                 background = background_list[i, 1, j]
+                signal_error = signal_list_error[i, 1, j]
+                background_error = background_list_error[i, 1, j]
 
                 signal_2 = signal_list[i, 1, j]
 
@@ -408,6 +412,8 @@ def main():
             else:
                 signal = (signal_list[i, 0, j] + signal_list[i, 1, j]) / 2
                 background = (background_list[i, 0, j] + background_list[i, 1, j]) / 2
+                signal_error = (signal_list_error[i, 0, j] + signal_list_error[i, 1, j])/2
+                background_error = (background_list_error[i, 0, j] + background_list_error[i, 1, j])/2
 
                 signal_2 = (signal_list_2[i, 0, j] + signal_list_2[i, 1, j]) / 2
 
@@ -419,6 +425,8 @@ def main():
             days_list[j] = day
             dosimeter_signal[j] = signal
             dosimeter_background[j] = background
+            dosimeter_signal_error[j] = signal_error
+            dosimeter_background_error[j] = background_error
 
             dosimeter_signal_2[j] = signal_2
 
@@ -426,6 +434,9 @@ def main():
         if i < 3:
             dosimeter_signal = np.delete(dosimeter_signal, 2)
             dosimeter_background = np.delete(dosimeter_background, 2)
+            dosimeter_signal_error = np.delete(dosimeter_signal_error, 2)
+            dosimeter_background_error = np.delete(dosimeter_background_error, 2)
+
             days_list = np.delete(days_list, 2)
 
             dosimeter_signal_2 = np.delete(dosimeter_signal_2, 2)
@@ -433,6 +444,8 @@ def main():
         else:
             dosimeter_signal = np.delete(dosimeter_signal, 3)
             dosimeter_background = np.delete(dosimeter_background, 3)
+            dosimeter_signal_error = np.delete(dosimeter_signal_error, 3)
+            dosimeter_background_error = np.delete(dosimeter_background_error, 3)
 
             dosimeter_signal_2 = np.delete(dosimeter_signal_2, 3)
 
@@ -445,9 +458,13 @@ def main():
             temp = 2
         else:
             temp = 3
+
+
         #plt.errorbar(days_list, dosimeter_signal, color=c_string[temp], marker='*', markersize=8, linestyle='-', label=i+1)
-        plt.errorbar(days_list, dosimeter_background, color=c_string[temp], marker='*', markersize=8, linestyle='--')
-        plt.errorbar(days_list, dosimeter_signal_2, color=c_string[temp], marker='*', markersize=8, linestyle='-')
+        plt.errorbar(days_list, dosimeter_background, yerr=dosimeter_background_error,
+                     color=c_string[temp],  markersize=5, marker='*', linestyle='--', capsize=3)
+        plt.errorbar(days_list, dosimeter_signal_2, yerr=dosimeter_signal_error,
+                     color=c_string[temp], markersize=5, marker='*', linestyle='-', capsize=3)
 
 
 
@@ -457,7 +474,7 @@ def main():
     plt.text(7, 0.42, 'Irradiation (group 2)', rotation=0)
 
     plt.xlabel('Days after casting')
-    plt.ylabel('$\Delta$OD [cm${}^{-1}$]')
+    plt.ylabel('$\Delta$OD')
 
     from matplotlib.lines import Line2D
     styles = ['-',  '--']
@@ -467,7 +484,7 @@ def main():
     plt.gca().add_artist(legend1)
 
     colors = [c_string[0], c_string[2], c_string[3]]
-    lines = [Line2D([0], [0], color=c,  linestyle='-', marker='*', markersize=8) for c in colors]
+    lines = [Line2D([0], [0], color=c,  linestyle='-', marker='*', markersize=5) for c in colors]
     labels = ['5', '15', '20']
     legend2 = plt.legend(lines, labels, title='Storage [$^{\circ}$C]', loc='upper right', fancybox=True, framealpha=0.3)
     plt.gca().add_artist(legend2)
@@ -475,10 +492,8 @@ def main():
     #plt.legend(bbox_to_anchor=(1.0, 1), loc='upper left', title='Dosimeter')
 
     plt.tight_layout()
-    plt.savefig('plots/bg_signal_ratio.png', dpi=400)
+    plt.savefig('plots/bg_signal_ratio.png', dpi=600)
     plt.show()
-
-
 
 
 
@@ -486,8 +501,8 @@ def main():
     plt.rcParams.update({'font.size': 15})
     c_string = sns.color_palette("dark", 7)
     # plt.rcParams['figure.constrained_layout.use'] = True
-    fig, ax = plt.subplots(3, 4, sharex=True, sharey=True)  # constrained_layout=True)
-    fig.set_size_inches(12, 6)
+    fig, ax = plt.subplots(3, 5, sharex=True, sharey=True)  # constrained_layout=True)
+    fig.set_size_inches(12, 5.5)
 
     dos_lat_2_base = [0, 0, 0, 0, 0, 0]
     print(dos_lat_2_base)
@@ -513,18 +528,21 @@ def main():
             dos_lat_2 = dosimeter.OCT[:, y, :] - dos_lat_2_base[int(dosimeter.dos_number) - 1]
 
             if int(dosimeter.readout_days) == 1:
-                continue
-            i = int(dosimeter.readout_days) - 2
+                dos_lat_2 = dos_lat_2_base[int(dosimeter.dos_number) - 1]
+
+            i = int(dosimeter.readout_days) - 1
 
             if i >= 2:
                 i = i - 1
 
-            im = ax[int(dosimeter.dos_number) - 1 - 3, i].imshow(dos_lat_2, vmin=0, vmax=0.35, cmap='viridis')
+            im = ax[int(dosimeter.dos_number) - 1 - 3, i].imshow(dos_lat_2, vmin=0, vmax=0.35, cmap='jet')
+
+
             #ax[int(dosimeter.dos_number) - 1, i].set_xticklabels([])
             #ax[int(dosimeter.dos_number) - 1, i].set_yticklabels([])
 
 
-    fig.colorbar(im, ax=ax.ravel().tolist(), label='$\Delta \mathrm{OD} -\Delta \mathrm{OD}_{\mathrm{day\, 0}}$ [cm${}^{-1}$]')
+    fig.colorbar(im, ax=ax.ravel().tolist(), label='$\Delta \mathrm{OD} -\Delta \mathrm{OD}_{\mathrm{day\, 0}}$ ')
 
     ax[0, 0].set_ylabel('5${}^\circ$C\n Depth [mm]')
     ax[1, 0].set_ylabel('15${}^\circ$C\n Depth [mm]')
@@ -533,13 +551,15 @@ def main():
     ax[2, 1].set_xlabel('Width [mm]')
     ax[2, 2].set_xlabel('Width [mm]')
     ax[2, 3].set_xlabel('Width [mm]')
+    ax[2, 4].set_xlabel('Width [mm]')
 
-    ax[0, 0].set_title('Day 1')
-    ax[0, 1].set_title('Day 3')
-    ax[0, 2].set_title('Day 4')
-    ax[0, 3].set_title('Day 5')
+    ax[0, 0].set_title('Day 0')
+    ax[0, 1].set_title('Day 1')
+    ax[0, 2].set_title('Day 3')
+    ax[0, 3].set_title('Day 4')
+    ax[0, 4].set_title('Day 5')
 
-    plt.savefig('plots/diff_dos_1_2_3.eps')
+    plt.savefig('plots/diff_dos_1_2_3.svg', dpi=600)
 
     plt.show()
 

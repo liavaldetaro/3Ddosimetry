@@ -17,6 +17,8 @@ help:
 	@echo "* To clean temp files, type 'make clean' "
 	@echo "	- removes the temporary files		"
 	@echo "						"
+	@echo "* To convert the files from vff to mat format, type 'make convert'"
+	@echo "                                         "
 	@echo "* To prepare the data sets, type 'make prepare'"
 	@echo "	- prepares the data sets by cropping the raw "
 	@echo "	  files, and aligning all the data sets"
@@ -35,6 +37,8 @@ $(directory):
 $(directory_lib):
 	@echo "Folder $(directory_lib) does not exist!"
 
+convert:
+	${PYTHON} $(directory_lib)/vff2mat.py
 prepare: 
 	${PYTHON} $(directory_lib)/crop_data.py
 	${PYTHON} $(directory_lib)/align_data.py

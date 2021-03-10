@@ -65,7 +65,7 @@ def main():
     '''
 
 
-    path =  '/home/lia/Documents/Photon_project/3Ddosimetry/data/reconstructions/_mat_crop_aligned'
+    path =  '/home/lia/Documents/Photon_project/3Ddosimetry/data/reconstructions/5_ca_crop'
 
     for name in os.listdir(path):
 
