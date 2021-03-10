@@ -1,0 +1,10 @@
+\contentsline {section}{\numberline {{\sf I}.}Introduction}{1}{section.1}
+\contentsline {section}{\numberline {{\sf II}.}Methods}{2}{section.2}
+\contentsline {subsection}{\numberline {{\sf II}.{\sf A}.}Dosimeter}{2}{subsection.2.1}
+\contentsline {subsection}{\numberline {{\sf II}.{\sf B}.}Irradiation}{2}{subsection.2.2}
+\contentsline {subsection}{\numberline {{\sf II}.{\sf C}.}Optical readout}{3}{subsection.2.3}
+\contentsline {subsection}{\numberline {{\sf II}.{\sf D}.}Storage}{3}{subsection.2.4}
+\contentsline {section}{\numberline {{\sf III}.}Tables}{4}{section.3}
+\contentsline {section}{\numberline {{\sf IV}.}Figures}{5}{section.4}
+\contentsline {section}{\hbox to\@tempdima {\hfil }Appendix}{7}{section*.2}
+\contentsline {section}{\hbox to\@tempdima {\hfil }References}{7}{section*.3}

@@ -1,0 +1,24 @@
+This area includes the following files
+latex_template_MedPhys_2018.tex	 Example template .tex file
+latex_template_MedPhys_2018.pdf  pdf file produced from template file 
+ 			by pdflatex
+example.bib		Bibliography file needed to latex the template.
+			However, for final submission, the example.bbl
+			file created when running bibtex should be cut
+			and pasted into the .tex file. See discussion near
+			end of the template .tex file
+f_curve_1overV.agr	xmgrace source file which created the 2 formated
+			figures used in the example. It is not needed
+			to run the example. xmgrace is freeware.
+f_curve_1overV.jpg	Example figure in jpg format. Each figure must be 
+			downloaded with the tex file when submitting.
+f_curve_1overV.pdf	Example figure in pdf format. It is much sharper
+			than the .jpg version, at least when using xmgrace
+lineno.sty		This package is not part of all pdflatex
+			installations so is included here in case missing.
+medphy.bst		This file defines the format of the references
+			produced from the .bib file. It is as close as we
+			could get to the Medical Physics style (but not
+			perfect so if you can improve it, please share with
+			us all).
+
