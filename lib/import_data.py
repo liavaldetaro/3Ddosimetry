@@ -50,9 +50,9 @@ def determine_dose_lvls(dosimeter):
     z = int(dosimeter.OCT.shape[2] / 2)
 
     n = 2
-    m = 5
+    m = 10
 
-    dosimeter.dose_levels = np.mean(np.mean(dosimeter.OCT[x-m:x+m, y - n:y + n, 20:25], axis=0))
+    dosimeter.dose_levels = np.mean(np.mean(dosimeter.OCT[x-m:x+m, y-n:y+n, z-n:z+n], axis=0))
 
     return dosimeter.dose_levels
 

@@ -1,5 +1,5 @@
 
-import pyelastix
+#import pyelastix
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sc
@@ -65,7 +65,7 @@ def main():
     '''
 
 
-    path =  '/home/lia/Documents/Photon_project/3Ddosimetry/data/reconstructions/5_ca_crop'
+    path =  '../data/reconstructions/5_ca_crop'
 
     for name in os.listdir(path):
 
